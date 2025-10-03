@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,9 +16,8 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ThemeToggle } from "./theme-toggle";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Settings } from "lucide-react";
 
 export function UserNav() {
   const { user } = useAuth();
@@ -29,26 +28,18 @@ export function UserNav() {
     router.push("/login");
   };
 
-  const userAvatar = PlaceHolderImages.find(
-    (img) => img.id === "user-avatar-1"
-  );
-  const avatarUrl = user?.photoURL || userAvatar?.imageUrl;
   const userInitials =
     user?.displayName
       ?.split(" ")
       .map((n) => n[0])
-      .join("") || "FW";
+      .join("")
+      .toUpperCase() || "FW";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage
-              src={avatarUrl}
-              alt={user?.displayName || "User"}
-              data-ai-hint={userAvatar?.imageHint}
-            />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
         </Button>

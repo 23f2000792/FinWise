@@ -47,10 +47,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6 md:justify-end">
-          <SidebarTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
+          <SidebarTrigger className="md:hidden">
               <Menu />
-            </Button>
           </SidebarTrigger>
           <UserNav />
         </header>

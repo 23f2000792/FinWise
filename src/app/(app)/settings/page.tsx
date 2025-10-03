@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +18,8 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { updateProfile } from "firebase/auth";
+import { useDocument } from 'react-firebase-hooks/firestore';
+
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -27,17 +28,22 @@ const profileFormSchema = z.object({
 });
 
 export default function SettingsPage() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const [userProfile, loadingProfile] = useDocument(user ? doc(db, 'users', user.uid) : null);
+
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
     values: {
       name: user?.displayName || "",
       email: user?.email || "",
-      currency: "INR", // This should be fetched from user profile in firestore
+      currency: userProfile?.data()?.currency || "INR",
     },
+    resetOptions: {
+        keepDirtyValues: true,
+    }
   });
 
   async function onSubmit(values: z.infer<typeof profileFormSchema>) {
@@ -162,7 +168,7 @@ export default function SettingsPage() {
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormIte>
+                      </FormItem>
                     )}
                   />
                   <Button type="submit" disabled={isSubmitting}>

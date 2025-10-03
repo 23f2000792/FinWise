@@ -24,13 +24,7 @@ export function LandingPage() {
               Features
             </Link>
             <Link
-              href="#pricing"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="#contact"
+              href="/contact"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Contact
@@ -189,58 +183,6 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="pricing" className="bg-muted py-20 md:py-28">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                Simple, Transparent Pricing
-              </h2>
-              <p className="mt-3 max-w-xl mx-auto text-muted-foreground">
-                Start for free and upgrade when you're ready. No hidden fees.
-              </p>
-            </div>
-            <div className="mx-auto grid max-w-md gap-8 lg:max-w-4xl lg:grid-cols-2">
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle>Free</CardTitle>
-                  <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/month</span></p>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-4">
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> Basic expense tracking</li>
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> 1 financial goal</li>
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> Monthly reports</li>
-                  </ul>
-                </CardContent>
-                <div className="p-6 pt-0">
-                  <Button className="w-full" variant="outline" asChild>
-                    <Link href="/signup">Start for Free</Link>
-                  </Button>
-                </div>
-              </Card>
-              <Card className="flex flex-col border-primary">
-                 <div className="p-1 text-center text-sm text-primary-foreground bg-primary rounded-t-lg">Most Popular</div>
-                <CardHeader>
-                  <CardTitle>Pro</CardTitle>
-                  <p className="text-4xl font-bold">$9<span className="text-sm font-normal text-muted-foreground">/month</span></p>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-4">
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> Advanced expense tracking</li>
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> Unlimited financial goals</li>
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> AI-powered insights</li>
-                    <li className="flex items-center gap-3"><CheckCircleIcon className="h-5 w-5 text-primary" /> Priority support</li>
-                  </ul>
-                </CardContent>
-                <div className="p-6 pt-0">
-                  <Button className="w-full" asChild>
-                    <Link href="/signup">Go Pro</Link>
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer id="contact" className="border-t">
@@ -250,13 +192,13 @@ export function LandingPage() {
           </div>
           <div className="flex gap-4">
              <Link
-              href="#"
+              href="/privacy-policy"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Privacy Policy
             </Link>
              <Link
-              href="#"
+              href="/terms-of-service"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Terms of Service

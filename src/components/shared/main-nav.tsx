@@ -6,7 +6,6 @@ import {
   ArrowRightLeft,
   LayoutDashboard,
   PiggyBank,
-  Settings,
   Target,
 } from "lucide-react";
 import {
@@ -37,11 +36,6 @@ const menuItems = [
     label: "Goals",
     icon: Target,
   },
-  {
-    href: "/settings",
-    label: "Settings",
-    icon: Settings
-  }
 ];
 
 export function MainNav({ className }: { className?: string }) {

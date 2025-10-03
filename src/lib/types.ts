@@ -11,10 +11,12 @@ export interface UserProfile {
 
 export interface FinancialGoal {
   id: string;
+  userId: string;
   goalName: string;
   targetAmount: number;
   currentAmount: number;
   deadline: Timestamp;
+  createdAt: Timestamp;
 }
 
 export interface Transaction {
@@ -35,4 +37,5 @@ export interface Budget {
   limit: number;
   spent: number;
   month: string; // e.g., "2025-10"
+  createdAt: Timestamp;
 }

@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "UserProfile": {
@@ -29,11 +28,148 @@
           "description": "URL for the user's avatar image."
         }
       },
-      "required": ["name", "email", "createdAt", "currency"]
+      "required": [
+        "name",
+        "email",
+        "createdAt"
+      ]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Represents a single financial transaction.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns the transaction."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The transaction amount."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "description": "The type of transaction."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the transaction."
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date of the transaction."
+        },
+        "note": {
+          "type": "string",
+          "description": "An optional note for the transaction."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the transaction was created."
+        }
+      },
+      "required": [
+        "userId",
+        "amount",
+        "type",
+        "category",
+        "date",
+        "createdAt"
+      ]
+    },
+    "Budget": {
+      "title": "Budget",
+      "description": "Represents a monthly budget for a specific category.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns the budget."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category the budget applies to."
+        },
+        "limit": {
+          "type": "number",
+          "description": "The budget limit for the month."
+        },
+        "spent": {
+          "type": "number",
+          "description": "The amount spent in this category for the month."
+        },
+        "month": {
+          "type": "string",
+          "description": "The month of the budget in YYYY-MM format."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the budget was created."
+        }
+      },
+      "required": [
+        "userId",
+        "category",
+        "limit",
+        "spent",
+        "month",
+        "createdAt"
+      ]
+    },
+    "FinancialGoal": {
+      "title": "Financial Goal",
+      "description": "Represents a user's financial goal.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns the goal."
+        },
+        "goalName": {
+          "type": "string",
+          "description": "The name of the financial goal."
+        },
+        "targetAmount": {
+          "type": "number",
+          "description": "The target amount for the goal."
+        },
+        "currentAmount": {
+          "type": "number",
+          "description": "The current amount saved towards the goal."
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The deadline for the goal."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the goal was created."
+        }
+      },
+      "required": [
+        "userId",
+        "goalName",
+        "targetAmount",
+        "currentAmount",
+        "deadline",
+        "createdAt"
+      ]
     }
   },
   "auth": {
-    "providers": ["email", "google.com"]
+    "providers": [
+      "email",
+      "google.com"
+    ]
   },
   "firestore": {
     "/users/{userId}": {
@@ -41,6 +177,24 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Stores public information for each user."
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": {
+        "$ref": "#/entities/Transaction"
+      },
+      "description": "Stores all transactions for a user."
+    },
+    "/users/{userId}/budgets/{budgetId}": {
+      "schema": {
+        "$ref": "#/entities/Budget"
+      },
+      "description": "Stores all budgets for a user."
+    },
+    "/users/{userId}/goals/{goalId}": {
+      "schema": {
+        "$ref": "#/entities/FinancialGoal"
+      },
+      "description": "Stores all financial goals for a user."
     }
   }
 }

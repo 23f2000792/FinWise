@@ -39,7 +39,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Logo />
+          <Logo textClassName="text-sidebar-foreground" />
         </SidebarHeader>
         <SidebarContent>
           <MainNav />
@@ -47,13 +47,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6 md:justify-end">
-          <div className="md:hidden">
-            <SidebarTrigger>
-              <Button variant="ghost" size="icon">
-                <Menu />
-              </Button>
-            </SidebarTrigger>
-          </div>
+          <SidebarTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu />
+            </Button>
+          </SidebarTrigger>
           <UserNav />
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>

@@ -61,12 +61,10 @@ export default function DashboardPage() {
           <div className="lg:col-span-2">
             <SpendingChart transactions={transactions} />
           </div>
-          <div className="space-y-6">
-            <GoalsOverview goal={goal} />
-            <AiInsights transactions={transactions} />
-          </div>
+          <GoalsOverview goal={goal} />
         </div>
         <RecentTransactions transactions={transactions} />
+        <AiInsights transactions={transactions} />
       </div>
     </div>
   );

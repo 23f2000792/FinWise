@@ -1,22 +1,53 @@
+'use client';
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { DollarSign, TrendingDown, TrendingUp } from "lucide-react";
+} from '@/components/ui/card';
+import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
+import type { Transaction } from '@/lib/types';
+import { useAuth } from '@/hooks/use-auth';
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { format, startOfMonth, isWithinInterval } from 'date-fns';
 
-export function OverviewCards() {
-  const totalBalance = 45231.89;
-  const totalIncome = 7830.0;
-  const totalExpenses = 3326.5;
+interface OverviewCardsProps {
+  transactions: Transaction[];
+}
+
+export function OverviewCards({ transactions }: OverviewCardsProps) {
+  const { user } = useAuth();
+  const [userProfile] = useDocument(user ? doc(db, 'users', user.uid) : null);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: userProfile?.data()?.currency || 'INR',
     }).format(amount);
   };
+  
+  const now = new Date();
+  const startOfCurrentMonth = startOfMonth(now);
+
+  const thisMonthTransactions = transactions.filter((t) =>
+    isWithinInterval(t.date.toDate(), { start: startOfCurrentMonth, end: now })
+  );
+
+  const totalIncome = thisMonthTransactions
+    .filter((t) => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpenses = thisMonthTransactions
+    .filter((t) => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+    
+  const totalBalance = transactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum + t.amount : sum - t.amount;
+  }, 0);
+
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -29,7 +60,6 @@ export function OverviewCards() {
           <div className="text-2xl font-bold">
             {formatCurrency(totalBalance)}
           </div>
-          <p className="text-xs text-muted-foreground">+20.1% from last month</p>
         </CardContent>
       </Card>
       <Card>
@@ -41,9 +71,6 @@ export function OverviewCards() {
           <div className="text-2xl font-bold">
             {formatCurrency(totalIncome)}
           </div>
-          <p className="text-xs text-muted-foreground">
-            +15.2% from last month
-          </p>
         </CardContent>
       </Card>
       <Card>
@@ -57,9 +84,6 @@ export function OverviewCards() {
           <div className="text-2xl font-bold">
             {formatCurrency(totalExpenses)}
           </div>
-          <p className="text-xs text-muted-foreground">
-            +10.5% from last month
-          </p>
         </CardContent>
       </Card>
     </div>

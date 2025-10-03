@@ -33,7 +33,7 @@ import {
 } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, ChevronsUpDown, Check } from "lucide-react";
 import type { Transaction } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -41,10 +41,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Textarea } from "../ui/textarea";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 const transactionFormSchema = z.object({
   amount: z.coerce
@@ -72,6 +81,14 @@ export function AddTransactionForm({
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openCategorySelector, setOpenCategorySelector] = useState(false);
+
+  const [budgetsSnapshot] = useCollection(
+    user ? collection(db, "users", user.uid, "budgets") : null
+  );
+
+  const categories =
+    budgetsSnapshot?.docs.map((doc) => doc.data().category) || [];
 
   const form = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
@@ -205,11 +222,79 @@ export function AddTransactionForm({
               control={form.control}
               name="category"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Category</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Groceries" {...field} />
-                  </FormControl>
+                  <Popover
+                    open={openCategorySelector}
+                    onOpenChange={setOpenCategorySelector}
+                  >
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? field.value
+                            : "Select or create a category"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search or create category..."
+                          onKeyDown={(e) => {
+                            if (
+                              e.key === "Enter" &&
+                              !categories.includes(e.currentTarget.value)
+                            ) {
+                              form.setValue(
+                                "category",
+                                e.currentTarget.value,
+                                { shouldValidate: true }
+                              );
+                              setOpenCategorySelector(false);
+                            }
+                          }}
+                        />
+                        <CommandList>
+                          <CommandEmpty>
+                            No category found. Type and press Enter to add.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {categories.map((category) => (
+                              <CommandItem
+                                value={category}
+                                key={category}
+                                onSelect={() => {
+                                  form.setValue("category", category, {
+                                    shouldValidate: true,
+                                  });
+                                  setOpenCategorySelector(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    category === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {category}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -96,6 +96,11 @@ export function AddTransactionForm({
       type: "expense",
       note: "",
     },
+  });
+
+  const transactionType = useWatch({
+    control: form.control,
+    name: "type",
   });
 
   useEffect(() => {
@@ -224,77 +229,83 @@ export function AddTransactionForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Category</FormLabel>
-                  <Popover
-                    open={openCategorySelector}
-                    onOpenChange={setOpenCategorySelector}
-                  >
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? field.value
-                            : "Select or create a category"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search or create category..."
-                          onKeyDown={(e) => {
-                            if (
-                              e.key === "Enter" &&
-                              !categories.includes(e.currentTarget.value)
-                            ) {
-                              form.setValue(
-                                "category",
-                                e.currentTarget.value,
-                                { shouldValidate: true }
-                              );
-                              setOpenCategorySelector(false);
-                            }
-                          }}
-                        />
-                        <CommandList>
-                          <CommandEmpty>
-                            No category found. Type and press Enter to add.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {categories.map((category) => (
-                              <CommandItem
-                                value={category}
-                                key={category}
-                                onSelect={() => {
-                                  form.setValue("category", category, {
-                                    shouldValidate: true,
-                                  });
-                                  setOpenCategorySelector(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    category === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                {category}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  {transactionType === "expense" ? (
+                    <Popover
+                      open={openCategorySelector}
+                      onOpenChange={setOpenCategorySelector}
+                    >
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? field.value
+                              : "Select or create a category"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Search or create category..."
+                            onKeyDown={(e) => {
+                              if (
+                                e.key === "Enter" &&
+                                !categories.includes(e.currentTarget.value)
+                              ) {
+                                form.setValue(
+                                  "category",
+                                  e.currentTarget.value,
+                                  { shouldValidate: true }
+                                );
+                                setOpenCategorySelector(false);
+                              }
+                            }}
+                          />
+                          <CommandList>
+                            <CommandEmpty>
+                              No category found. Type and press Enter to add.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {categories.map((category) => (
+                                <CommandItem
+                                  value={category}
+                                  key={category}
+                                  onSelect={() => {
+                                    form.setValue("category", category, {
+                                      shouldValidate: true,
+                                    });
+                                    setOpenCategorySelector(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      category === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {category}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <FormControl>
+                      <Input placeholder="e.g., Salary" {...field} />
+                    </FormControl>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -333,6 +344,9 @@ export function AddTransactionForm({
                           date > new Date() || date < new Date("1900-01-01")
                         }
                         initialFocus
+                        captionLayout="dropdown-buttons"
+                        fromYear={new Date().getFullYear() - 10}
+                        toYear={new Date().getFullYear()}
                       />
                     </PopoverContent>
                   </Popover>

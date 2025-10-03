@@ -74,7 +74,6 @@ export function AddGoalForm({ isOpen, onClose, goal }: AddGoalFormProps) {
       goalName: '',
       targetAmount: 0,
       currentAmount: 0,
-      deadline: new Date(),
     },
   });
 
@@ -91,7 +90,7 @@ export function AddGoalForm({ isOpen, onClose, goal }: AddGoalFormProps) {
         goalName: '',
         targetAmount: 0,
         currentAmount: 0,
-        deadline: new Date(),
+        deadline: undefined,
       });
     }
   }, [goal, form, isOpen]);
@@ -220,6 +219,9 @@ export function AddGoalForm({ isOpen, onClose, goal }: AddGoalFormProps) {
                         onSelect={field.onChange}
                         disabled={(date) => date < new Date()}
                         initialFocus
+                        captionLayout="dropdown-buttons"
+                        fromYear={new Date().getFullYear()}
+                        toYear={new Date().getFullYear() + 10}
                       />
                     </PopoverContent>
                   </Popover>

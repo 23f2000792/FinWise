@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   PiggyBank,
   Target,
+  BarChart4,
 } from "lucide-react";
 import {
   SidebarMenu,
@@ -35,6 +36,11 @@ const menuItems = [
     href: "/goals",
     label: "Goals",
     icon: Target,
+  },
+  {
+    href: "/analytics",
+    label: "Analytics",
+    icon: BarChart4,
   },
 ];
 

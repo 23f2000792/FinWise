@@ -1,7 +1,21 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart, DollarSign, Goal, Shield } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+import {
+  ArrowRight,
+  BarChart,
+  DollarSign,
+  Goal,
+  Shield,
+  Sun,
+  Moon,
+} from "lucide-react";
 import Link from "next/link";
 import { Logo } from "../shared/logo";
 import { UserNav } from "../shared/user-nav";
@@ -16,26 +30,25 @@ export function LandingPage() {
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <Logo />
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link
-              href="#features"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Features
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Contact
-            </Link>
-          </nav>
+          <nav className="hidden items-center gap-6 md:flex"></nav>
           <div className="flex items-center gap-4">
             {!loading &&
               (user ? (
                 <UserNav />
               ) : (
                 <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        <span className="sr-only">Toggle theme</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <ThemeToggle />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button variant="ghost" asChild>
                     <Link href="/login">Sign In</Link>
                   </Button>
@@ -52,9 +65,7 @@ export function LandingPage() {
 
       <main className="flex-1">
         <section className="relative py-20 text-center md:py-32 lg:py-40">
-           <div
-            className="absolute inset-0 -z-10 bg-grid-slate-200/[0.04] bg-[length:1rem_1rem] [mask-image:radial-gradient(ellipse_50%_60%_at_50%_40%,#000_10%,transparent_100%)]"
-          ></div>
+          <div className="absolute inset-0 -z-10 bg-grid-slate-200/[0.04] bg-[length:1rem_1rem] [mask-image:radial-gradient(ellipse_50%_60%_at_50%_40%,#000_10%,transparent_100%)]"></div>
           <div className="container mx-auto px-4 md:px-6">
             <div className="mx-auto max-w-3xl">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
@@ -82,7 +93,8 @@ export function LandingPage() {
                 Features Designed for You
               </h2>
               <p className="mt-3 max-w-2xl mx-auto text-muted-foreground">
-                FinWise provides all the tools you need to build a better financial future.
+                FinWise provides all the tools you need to build a better
+                financial future.
               </p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -95,7 +107,8 @@ export function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Easily log and categorize your expenses to see where your money goes.
+                    Easily log and categorize your expenses to see where your
+                    money goes.
                   </p>
                 </CardContent>
               </Card>
@@ -108,7 +121,8 @@ export function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Visualize your spending habits with easy-to-understand charts and graphs.
+                    Visualize your spending habits with easy-to-understand
+                    charts and graphs.
                   </p>
                 </CardContent>
               </Card>
@@ -121,7 +135,8 @@ export function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Set and track your financial goals, from saving for a vacation to a down payment.
+                    Set and track your financial goals, from saving for a
+                    vacation to a down payment.
                   </p>
                 </CardContent>
               </Card>
@@ -134,7 +149,8 @@ export function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Your financial data is encrypted and protected with the highest security standards.
+                    Your financial data is encrypted and protected with the
+                    highest security standards.
                   </p>
                 </CardContent>
               </Card>
@@ -150,27 +166,35 @@ export function LandingPage() {
                   Visualize Your Path to Financial Freedom
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  Our interactive dashboard gives you a complete overview of your financial health at a glance. Track your progress, identify trends, and make smarter decisions with your money.
+                  Our interactive dashboard gives you a complete overview of
+                  your financial health at a glance. Track your progress,
+                  identify trends, and make smarter decisions with your money.
                 </p>
                 <ul className="mt-6 space-y-4">
                   <li className="flex items-start gap-3">
                     <CheckCircleIcon className="h-6 w-6 text-primary mt-1" />
                     <div>
-                      <h3 className="font-semibold">Comprehensive Dashboard</h3>
-                      <p className="text-muted-foreground text-sm">All your financial data in one place.</p>
+                      <h3 className="font-semibold">
+                        Comprehensive Dashboard
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        All your financial data in one place.
+                      </p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircleIcon className="h-6 w-6 text-primary mt-1" />
                     <div>
                       <h3 className="font-semibold">AI-Powered Insights</h3>
-                      <p className="text-muted-foreground text-sm">Get personalized tips to improve your spending.</p>
+                      <p className="text-muted-foreground text-sm">
+                        Get personalized tips to improve your spending.
+                      </p>
                     </div>
                   </li>
                 </ul>
               </div>
               <div className="rounded-xl border shadow-lg overflow-hidden">
-                <Image 
+                <Image
                   src="https://picsum.photos/seed/finwise-dashboard/800/600"
                   width={800}
                   height={600}
@@ -182,7 +206,6 @@ export function LandingPage() {
             </div>
           </div>
         </section>
-
       </main>
 
       <footer id="contact" className="border-t">
@@ -191,13 +214,19 @@ export function LandingPage() {
             © {new Date().getFullYear()} FinWise. All rights reserved.
           </div>
           <div className="flex gap-4">
-             <Link
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Contact
+            </Link>
+            <Link
               href="/privacy-policy"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Privacy Policy
             </Link>
-             <Link
+            <Link
               href="/terms-of-service"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
@@ -209,7 +238,6 @@ export function LandingPage() {
     </div>
   );
 }
-
 
 function CheckCircleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (

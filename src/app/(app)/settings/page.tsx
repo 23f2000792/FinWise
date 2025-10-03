@@ -3,7 +3,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,6 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { updateProfile } from "firebase/auth";
@@ -78,10 +77,6 @@ export default function SettingsPage() {
     }
   }
   
-  const userAvatar = PlaceHolderImages.find(
-    (img) => img.id === "user-avatar-1"
-  );
-  const avatarUrl = user?.photoURL || userAvatar?.imageUrl;
   const userInitials =
     user?.displayName
       ?.split(" ")
@@ -104,8 +99,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={avatarUrl} alt={user?.displayName || "User"} />
-                <AvatarFallback>{userInitials}</AvatarFallback>
+                <AvatarFallback className="text-3xl">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="text-center">
                 <h2 className="text-xl font-bold">{user?.displayName}</h2>
@@ -130,7 +124,7 @@ export default function SettingsPage() {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your Name" {...field} />
+                          <Input placeholder="Your Name" {...field} disabled />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -1,132 +1,120 @@
 /**
- * @fileoverview Firestore Security Rules for the application.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model. Each user has a dedicated data tree
- * under `/users/{userId}` and can only access their own data.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for all data.
  *
  * Data Structure:
- * - `/users/{userId}`: Stores user profile information.
- * - `/users/{userId}/transactions/{transactionId}`: Stores transaction data for a specific user.
- * - `/users/{userId}/budgets/{budgetId}`: Stores budget data for a specific user.
- * - `/users/{userId}/goals/{goalId}`: Stores financial goal data for a specific user.
+ * - /users/{userId}: Stores public user profile information. Only the user can read/write their own profile.
+ * - /users/{userId}/transactions/{transactionId}: Stores transaction data for each user. Only the user can manage their own transactions.
+ * - /users/{userId}/budgets/{budgetId}: Stores budget data for each user. Only the user can manage their own budgets.
+ * - /users/{userId}/goals/{goalId}: Stores financial goal data for each user. Only the user can manage their own goals.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data and associated subcollections (transactions, budgets, goals).
- * - Listing all users is disallowed.
- *
- * Denormalization for Authorization:
- *  - The `userId` field within the Transaction, Budget, and FinancialGoal documents is used to enforce ownership.
- *  - No external `get()` calls are needed because the user ID is embedded in the document.
+ * - Users can only access their own data. No cross-user data access is allowed.
+ * - All writes are validated against the authenticated user's ID.
+ * - Listing of documents is restricted to the owner.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile information.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create) - User with ID 'user123' can create their profile.
-     * @allow (get) - User with ID 'user123' can read their profile.
-     * @allow (update) - User with ID 'user123' can update their profile.
-     * @allow (delete) - User with ID 'user123' can delete their profile.
-     * @deny (create) - User with ID 'user456' cannot create a profile with ID 'user123'.
-     * @deny (get) - User with ID 'user456' cannot read profile 'user123'.
-     * @deny (update) - User with ID 'user456' cannot update profile 'user123'.
-     * @deny (delete) - User with ID 'user456' cannot delete profile 'user123'.
-     * @principle Enforces document ownership for all operations on user profiles.
+     * @allow (create) - User with UID 'user_abc' can create their profile if request.auth.uid == 'user_abc'.
+     * @allow (get) - User with UID 'user_abc' can read their profile data.
+     * @allow (update) - User with UID 'user_abc' can update their profile data.
+     * @allow (delete) - User with UID 'user_abc' can delete their profile data.
+     * @deny (create) - User with UID 'user_xyz' cannot create a profile for 'user_abc'.
+     * @deny (update) - User with UID 'user_xyz' cannot update the profile of 'user_abc'.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
-      // Check if the user is signed in.
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false; // Disallow listing all users.
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+          return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to user transactions.
+     * @description Controls access to transaction documents for a specific user.
      * @path /users/{userId}/transactions/{transactionId}
-     * @allow (create) - User with ID 'user123' can create a transaction.
-     * @allow (get) - User with ID 'user123' can read their transaction.
-     * @allow (list) - User with ID 'user123' can list their transactions.
-     * @allow (update) - User with ID 'user123' can update their transaction.
-     * @allow (delete) - User with ID 'user123' can delete their transaction.
-     * @deny (create) - User with ID 'user456' cannot create a transaction for user 'user123'.
-     * @deny (get) - User with ID 'user456' cannot read a transaction for user 'user123'.
-     * @deny (list) - User with ID 'user456' cannot list transactions for user 'user123'.
-     * @deny (update) - User with ID 'user456' cannot update a transaction for user 'user123'.
-     * @deny (delete) - User with ID 'user456' cannot delete a transaction for user 'user123'.
-     * @principle Enforces document ownership for all operations on user transactions.
+     * @allow (create) - User with UID 'user_abc' can create a transaction under their profile.
+     * @allow (get) - User with UID 'user_abc' can read a transaction under their profile.
+     * @allow (update) - User with UID 'user_abc' can update a transaction under their profile.
+     * @allow (delete) - User with UID 'user_abc' can delete a transaction under their profile.
+     * @deny (create) - User with UID 'user_xyz' cannot create a transaction for 'user_abc'.
+     * @deny (update) - User with UID 'user_xyz' cannot update a transaction belonging to 'user_abc'.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/transactions/{transactionId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userId == userId;
-      allow update: if isSignedIn() && isOwner(userId) && resource.data.userId == userId;
-      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+        function isOwner(userId) {
+            return request.auth.uid == userId;
+        }
+        function isExistingOwner(userId) {
+            return isOwner(userId) && resource != null;
+        }
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to user budgets.
+     * @description Controls access to budget documents for a specific user.
      * @path /users/{userId}/budgets/{budgetId}
-     * @allow (create) - User with ID 'user123' can create a budget.
-     * @allow (get) - User with ID 'user123' can read their budget.
-     * @allow (list) - User with ID 'user123' can list their budgets.
-     * @allow (update) - User with ID 'user123' can update their budget.
-     * @allow (delete) - User with ID 'user123' can delete their budget.
-     * @deny (create) - User with ID 'user456' cannot create a budget for user 'user123'.
-     * @deny (get) - User with ID 'user456' cannot read a budget for user 'user123'.
-     * @deny (list) - User with ID 'user456' cannot list budgets for user 'user123'.
-     * @deny (update) - User with ID 'user456' cannot update a budget for user 'user123'.
-     * @deny (delete) - User with ID 'user456' cannot delete a budget for user 'user123'.
-     * @principle Enforces document ownership for all operations on user budgets.
+     * @allow (create) - User with UID 'user_abc' can create a budget under their profile.
+     * @allow (get) - User with UID 'user_abc' can read a budget under their profile.
+     * @allow (update) - User with UID 'user_abc' can update a budget under their profile.
+     * @allow (delete) - User with UID 'user_abc' can delete a budget under their profile.
+     * @deny (create) - User with UID 'user_xyz' cannot create a budget for 'user_abc'.
+     * @deny (update) - User with UID 'user_xyz' cannot update a budget belonging to 'user_abc'.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/budgets/{budgetId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userId == userId;
-      allow update: if isSignedIn() && isOwner(userId) && resource.data.userId == userId;
-      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+      function isOwner(userId) {
+          return request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+          return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to user financial goals.
+     * @description Controls access to financial goal documents for a specific user.
      * @path /users/{userId}/goals/{goalId}
-     * @allow (create) - User with ID 'user123' can create a goal.
-     * @allow (get) - User with ID 'user123' can read their goal.
-     * @allow (list) - User with ID 'user123' can list their goals.
-     * @allow (update) - User with ID 'user123' can update their goal.
-     * @allow (delete) - User with ID 'user123' can delete their goal.
-     * @deny (create) - User with ID 'user456' cannot create a goal for user 'user123'.
-     * @deny (get) - User with ID 'user456' cannot read a goal for user 'user123'.
-     * @deny (list) - User with ID 'user456' cannot list goals for user 'user123'.
-     * @deny (update) - User with ID 'user456' cannot update a goal for user 'user123'.
-     * @deny (delete) - User with ID 'user456' cannot delete a goal for user 'user123'.
-     * @principle Enforces document ownership for all operations on user financial goals.
+     * @allow (create) - User with UID 'user_abc' can create a goal under their profile.
+     * @allow (get) - User with UID 'user_abc' can read a goal under their profile.
+     * @allow (update) - User with UID 'user_abc' can update a goal under their profile.
+     * @allow (delete) - User with UID 'user_abc' can delete a goal under their profile.
+     * @deny (create) - User with UID 'user_xyz' cannot create a goal for 'user_abc'.
+     * @deny (update) - User with UID 'user_xyz' cannot update a goal belonging to 'user_abc'.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/goals/{goalId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userId == userId;
-      allow update: if isSignedIn() && isOwner(userId) && resource.data.userId == userId;
-      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+      function isOwner(userId) {
+          return request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+          return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
-  }
-
-  // Helper function to determine if the user is signed in.
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  // Helper function to determine if the user is the owner of the document.
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-    // Helper function to determine if the user is the owner of an existing document.
-  function isExistingOwner(userId) {
-    return isOwner(userId) && resource != null;
   }
 }

@@ -66,7 +66,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
             <TableRow>
               <TableHead>Category</TableHead>
               <TableHead className="hidden sm:table-cell">Type</TableHead>
-              <TableHead className="hidden sm:table-cell">Date</TableHead>
+              <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
@@ -96,7 +96,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                     {transaction.type}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">
+                <TableCell className="hidden md:table-cell">
                   {format(transaction.date.toDate(), 'dd MMM, yyyy')}
                 </TableCell>
                 <TableCell

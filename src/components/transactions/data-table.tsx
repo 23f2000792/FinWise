@@ -50,6 +50,11 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
     },
+    initialState: {
+        pagination: {
+            pageSize: 5,
+        }
+    }
   });
 
   return (
@@ -73,7 +78,10 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className={cn(
+                      (header.column.id === 'note' || header.column.id === 'date') && 'hidden md:table-cell',
+                      header.column.id === 'type' && 'hidden sm:table-cell',
+                    )}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -94,7 +102,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className={cn(
+                        (cell.column.id === 'note' || cell.column.id === 'date') && 'hidden md:table-cell',
+                        cell.column.id === 'type' && 'hidden sm:table-cell',
+                    )}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

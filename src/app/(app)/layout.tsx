@@ -15,7 +15,6 @@ import {
 import { Logo } from "@/components/shared/logo";
 import { MainNav } from "@/components/shared/main-nav";
 import { UserNav } from "@/components/shared/user-nav";
-import { Button } from "@/components/ui/button";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -48,7 +47,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6 md:justify-end">
           <SidebarTrigger className="md:hidden">
-              <Menu />
+            <Menu />
           </SidebarTrigger>
           <UserNav />
         </header>

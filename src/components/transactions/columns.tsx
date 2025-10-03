@@ -64,6 +64,7 @@ export const getColumns = (
       <Badge
         variant={row.original.type === "income" ? "secondary" : "outline"}
         className={cn(
+          'text-center',
           row.original.type === "income" &&
             "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300",
           row.original.type === "expense" &&
@@ -105,7 +106,7 @@ export const getColumns = (
     accessorKey: "note",
     header: "Note",
     cell: ({ row }) => (
-      <div className="truncate max-w-[150px]">{row.original.note}</div>
+      <div className="hidden sm:table-cell truncate max-w-[150px]">{row.original.note}</div>
     ),
   },
   {

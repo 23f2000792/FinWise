@@ -7,7 +7,6 @@ import { OverviewCards } from '@/components/dashboard/overview-cards';
 import { SpendingChart } from '@/components/dashboard/spending-chart';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { GoalsOverview } from '@/components/dashboard/goals-overview';
-import { AiInsights } from '@/components/dashboard/ai-insights';
 import { useAuth } from '@/hooks/use-auth';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -64,7 +63,6 @@ export default function DashboardPage() {
           <GoalsOverview goal={goal} />
         </div>
         <RecentTransactions transactions={transactions} />
-        <AiInsights transactions={transactions} />
       </div>
     </div>
   );

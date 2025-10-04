@@ -43,7 +43,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
   };
   
   const recentTransactions = useMemo(() => {
-    return transactions.sort((a,b) => b.date.toMillis() - a.date.toMillis()).slice(0, 5);
+    return [...transactions].sort((a,b) => b.date.toMillis() - a.date.toMillis()).slice(0, 5);
   }, [transactions]);
 
   return (

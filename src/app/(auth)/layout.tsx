@@ -1,11 +1,30 @@
-import { Logo } from "@/components/shared/logo";
-import Image from "next/image";
+"use client";
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { Logo } from "@/components/shared/logo";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && user) {
+            router.replace('/dashboard');
+        }
+    }, [user, loading, router]);
+
+    if (loading || user) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-background">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        );
+    }
+
   return (
     <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
       <div className="hidden lg:block">

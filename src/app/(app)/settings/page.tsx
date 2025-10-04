@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -124,7 +125,7 @@ export default function SettingsPage() {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your Name" {...field} disabled />
+                          <Input placeholder="Your Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

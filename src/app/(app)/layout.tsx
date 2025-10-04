@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Loader2, Menu } from "lucide-react";
 import {
   Sidebar,
@@ -15,6 +15,8 @@ import {
 import { Logo } from "@/components/shared/logo";
 import { MainNav } from "@/components/shared/main-nav";
 import { UserNav } from "@/components/shared/user-nav";
+import React from "react";
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

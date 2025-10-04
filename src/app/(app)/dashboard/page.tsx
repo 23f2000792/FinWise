@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PageHeader } from '@/components/shared/page-header';
@@ -15,6 +16,12 @@ import { AddTransactionForm } from '@/components/transactions/add-transaction-fo
 import { useState } from 'react';
 import type { Transaction, FinancialGoal } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { getSpendingInsights, SpendingInsightsInput } from '@/ai/ai-spending-insights';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Lightbulb } from 'lucide-react';
+import React from 'react';
+import { AiInsights } from '@/components/dashboard/ai-insights';
+
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -62,7 +69,8 @@ export default function DashboardPage() {
           </div>
           <GoalsOverview goal={goal} />
         </div>
-        <RecentTransactions transactions={transactions} />
+        <AiInsights />
+        <RecentTransactions transactions={transactions.slice(0, 5)} />
       </div>
     </div>
   );

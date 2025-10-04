@@ -188,7 +188,10 @@ export function AddTransactionForm({
                   <FormLabel>Transaction Type</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue('category', '');
+                      }}
                       defaultValue={field.value}
                       className="flex space-x-4"
                     >
@@ -258,7 +261,8 @@ export function AddTransactionForm({
                             onKeyDown={(e) => {
                               if (
                                 e.key === "Enter" &&
-                                !categories.includes(e.currentTarget.value)
+                                !categories.includes(e.currentTarget.value) &&
+                                e.currentTarget.value.trim() !== ''
                               ) {
                                 form.setValue(
                                   "category",

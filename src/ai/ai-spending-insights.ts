@@ -26,6 +26,7 @@ const TransactionSchema = z.object({
 const SpendingInsightsInputSchema = z.object({
   transactions: z.array(TransactionSchema),
   name: z.string(),
+  currency: z.string().default('INR'),
 });
 export type SpendingInsightsInput = z.infer<typeof SpendingInsightsInputSchema>;
 
@@ -63,7 +64,7 @@ const prompt = ai.definePrompt({
   output: { schema: SpendingInsightsOutputSchema },
   prompt: `You are a friendly and insightful financial assistant for an app called FinWise. Your goal is to provide personalized and actionable insights to users based on their recent transactions.
 
-Analyze the provided JSON data of the user's transactions. The user's name is {{name}}.
+Analyze the provided JSON data of the user's transactions. The user's name is {{name}}. The user's preferred currency is {{currency}}. All monetary values in your response should use this currency, not dollars. For example, if the currency is INR, use '₹' or 'INR'.
 
 Based on the data, generate a concise, friendly, and encouraging analysis.
 
@@ -72,7 +73,7 @@ Your response must be in JSON format and include:
 2.  A list of 2-3 'insights'. Each insight should be an object with:
     - 'emoji': A relevant emoji.
     - 'title': A short, catchy title (e.g., "Top Spending Category," "Income Boost").
-    - 'description': A single sentence summarizing the key finding. Be specific and use data (e.g., "You spent $250 on Food this month," "Your income increased by 20%").
+    - 'description': A single sentence summarizing the key finding. Be specific and use data (e.g., "You spent ₹2500 on Food this month," "Your income increased by 20%").
 
 Here is the user's transaction data:
 \`\`\`json

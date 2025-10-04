@@ -2,9 +2,9 @@
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
-import { collection } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { useCollection } from 'react-firebase-hooks/firestore';
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import type { Transaction } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { getSpendingInsights, SpendingInsightsInput } from '@/ai/ai-spending-insights';
@@ -17,12 +17,14 @@ export function AiInsights() {
   const [transactionsSnapshot, loadingTransactions] = useCollection(
     user ? collection(db, 'users', user.uid, 'transactions') : null
   );
+  const [userProfile, loadingProfile] = useDocument(user ? doc(db, 'users', user.uid) : null);
+
   const [insights, setInsights] = React.useState<any>(null);
   const [loadingInsights, setLoadingInsights] = React.useState(true);
 
   React.useEffect(() => {
     async function fetchInsights() {
-      if (user && transactionsSnapshot) {
+      if (user && transactionsSnapshot && userProfile) {
         const transactions = transactionsSnapshot.docs.map(doc => ({
           ...doc.data(),
           id: doc.id,
@@ -38,6 +40,7 @@ export function AiInsights() {
                 createdAt: t.createdAt.toDate().toISOString(),
               })),
               name: user.displayName || 'there',
+              currency: userProfile.data()?.currency || 'INR',
             };
             const result = await getSpendingInsights(input);
             setInsights(result);
@@ -51,12 +54,15 @@ export function AiInsights() {
           setInsights(null);
           setLoadingInsights(false);
         }
+      } else if (!loadingTransactions && !loadingProfile) {
+        setInsights(null);
+        setLoadingInsights(false);
       }
     }
     fetchInsights();
-  }, [user, transactionsSnapshot]);
+  }, [user, transactionsSnapshot, userProfile, loadingTransactions, loadingProfile]);
 
-  if (loadingTransactions || loadingInsights) {
+  if (loadingTransactions || loadingInsights || loadingProfile) {
     return (
       <Card>
         <CardHeader>
@@ -117,5 +123,3 @@ export function AiInsights() {
     </Card>
   );
 }
-
-

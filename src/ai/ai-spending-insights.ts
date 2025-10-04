@@ -76,7 +76,7 @@ Your response must be in JSON format and include:
 
 Here is the user's transaction data:
 \`\`\`json
-{{JSON.stringify transactions}}
+{{{transactions}}}
 \`\`\`
 
 Provide only the JSON output.`,
@@ -89,7 +89,11 @@ const getSpendingInsightsFlow = ai.defineFlow(
     outputSchema: SpendingInsightsOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
+    const { output } = await prompt({
+      ...input,
+      // @ts-ignore
+      transactions: JSON.stringify(input.transactions),
+    });
     return output!;
   }
 );

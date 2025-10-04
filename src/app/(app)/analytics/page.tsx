@@ -55,12 +55,12 @@ export default function AnalyticsPage() {
         title="Analytics"
         description="Visualize your financial data with charts."
       >
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           <Select
             value={selectedYear.toString()}
             onValueChange={(value) => setSelectedYear(parseInt(value))}
           >
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-full sm:w-[120px]">
               <SelectValue placeholder="Select Year" />
             </SelectTrigger>
             <SelectContent>
@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
             value={selectedMonth.toString()}
             onValueChange={(value) => setSelectedMonth(parseInt(value))}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select Month" />
             </SelectTrigger>
             <SelectContent>

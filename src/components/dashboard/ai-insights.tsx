@@ -28,7 +28,7 @@ export function AiInsights() {
           id: doc.id,
         })) as Transaction[];
         
-        if (transactions.length > 2) {
+        if (transactions.length > 0) {
           try {
             setLoadingInsights(true);
             const input: SpendingInsightsInput = {
@@ -89,7 +89,7 @@ export function AiInsights() {
            </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -117,4 +117,5 @@ export function AiInsights() {
     </Card>
   );
 }
+
 

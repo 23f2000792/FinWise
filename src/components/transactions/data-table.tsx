@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -79,10 +80,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className={cn(
-                      (header.column.id === 'note' || header.column.id === 'date') && 'hidden md:table-cell',
-                      header.column.id === 'type' && 'hidden sm:table-cell',
-                    )}>
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -104,8 +102,7 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className={cn(
-                        (cell.column.id === 'note' || cell.column.id === 'date') && 'hidden md:table-cell',
-                        cell.column.id === 'type' && 'hidden sm:table-cell',
+                      cell.column.id === 'note' && 'hidden sm:table-cell'
                     )}>
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -149,3 +146,4 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
+

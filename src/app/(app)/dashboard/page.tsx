@@ -16,9 +16,6 @@ import { AddTransactionForm } from '@/components/transactions/add-transaction-fo
 import { useState } from 'react';
 import type { Transaction, FinancialGoal } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
-import { getSpendingInsights, SpendingInsightsInput } from '@/ai/ai-spending-insights';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Lightbulb } from 'lucide-react';
 import React from 'react';
 import { AiInsights } from '@/components/dashboard/ai-insights';
 
@@ -63,11 +60,13 @@ export default function DashboardPage() {
 
       <div className="grid gap-6">
         <OverviewCards transactions={transactions} />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+          <div className="lg:col-span-3">
             <SpendingChart transactions={transactions} />
           </div>
-          <GoalsOverview goal={goal} />
+          <div className="lg:col-span-2">
+            <GoalsOverview goal={goal} />
+          </div>
         </div>
         <AiInsights />
         <RecentTransactions transactions={transactions.slice(0, 5)} />
